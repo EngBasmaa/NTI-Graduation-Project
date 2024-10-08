@@ -1,0 +1,21 @@
+.container {
+    width: 100vw;
+    display: flex;
+    flex-direction: row !important;
+    gap: 0;
+    justify-content: space-between;
+    min-height: 20rem;
+    z-index: 999;
+}
+
+.sidebar {
+    border: 2px solid red
+}
+
+.main {
+    border: 2px solid blue
+}
+
+li a {
+    cursor: pointer;
+}
