@@ -4,6 +4,7 @@ const Author = require("../models/author");
 const multer = require("multer");
 const path = require("path");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 filename = "";
 // upload images:
@@ -39,8 +40,45 @@ router.post("/register", upload.any("image"), (req, res) => {
     .then(savedAuthor => res.status(200).json(savedAuthor))
     .catch(err => res.status(400).send(err));
 });
+//..................................................
 
-router.post("/login", (req, res) => {});
+router.post("/login", async (req, res) => {
+  try {
+    console.log("Request Body:", req.body);
+
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).send("Email and password are required");
+    }
+
+    const author = await Author.findOne({ email });
+    if (!author) {
+      return res.status(400).send("Email not found");
+    }
+
+    const isValid = await bcrypt.compare(password, author.password);
+
+    if (!isValid) {
+      return res.status(400).send("Email or password is invalid");
+    }
+
+    // For the JWT:
+    const payload = {
+      _id: author.id,
+      email: author.email,
+      fullname: `${author.name} ${author.lastname}`
+    };
+
+    // to generate the JWT token
+    const token = jwt.sign(payload, "12345");
+
+    res.status(200).send({ myToken: token });
+  } catch (err) {
+    console.error("Error during login:", err);
+    res.status(500).send("Internal server error");
+  }
+});
+//..................................................
 
 router.get("/", (req, res) => {
   Author.find()
@@ -68,78 +106,5 @@ router.delete("/:id", async (req, res) => {
     res.status(400).send(err);
   }
 });
-router.put("/:id", upload.any("image"), async (req, res) => {
-  try {
-    const id = req.params.id;
-    const updatedData = req.body;
-
-    if (updatedData.tags) {
-      if (typeof updatedData.tags === "string") {
-        updatedData.tags = updatedData.tags.split(",").map(tag => tag.trim());
-      } else if (Array.isArray(updatedData.tags)) {
-        updatedData.tags = updatedData.tags.map(tag => tag.trim());
-      } else {
-        return res.status(400).send("Invalid tags format.");
-      }
-
-      // Join them into a string formatted as an array
-      updatedData.tags = `[${updatedData.tags.join(", ")}]`;
-    } else {
-      updatedData.tags = "[]";
-    }
-
-    if (req.files && req.files.length > 0) {
-      const images = req.files.map(file => file.filename);
-      updatedData.image = images.length > 0 ? images[0] : "";
-    }
-
-    const updatedArticle = await Author.findByIdAndUpdate(id, updatedData, {
-      new: true
-    });
-
-    if (!updatedArticle) {
-      return res.status(404).send("Article not found");
-    }
-
-    res.status(200).json(updatedArticle);
-  } catch (err) {
-    console.error("Error updating article:", err);
-  }
-});
-// ...........
-
-// router.post("/addArticle", upload.any("image"), (req, res) => {
-//   const article = new Author(req.body);
-//   let images;
-//   if (req.files && req.files.length > 0) {
-//     images = req.files.map(file => file.filename);
-//   } else {
-//     images = [];
-//   }
-//   article.image = images.length > 0 ? images[0] : "";
-//   article.tags = Array.isArray(req.body.tags) ? req.body.tags : [];
-//   article.date = new Date();
-
-//   article
-//     .save()
-//     .then(() => {
-//       res.status(200).send(article);
-//     })
-//     .catch(err => res.status(500).send(err));
-// });
-
-// router.get("/:id", async (req, res) => {
-//   try {
-//     const id = req.params.id;
-//     const articles = await Author.find({ idAuthor: id });
-
-//     if (!articles) {
-//       return res.status(200).json([]);
-//     }
-//     res.status(200).json(articles);
-//   } catch (err) {
-//     res.status(400).send(err);
-//   }
-// });
 
 module.exports = router;
