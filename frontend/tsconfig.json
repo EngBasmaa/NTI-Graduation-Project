@@ -3,6 +3,13 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+
+        "forceConsistentCasingInFileNames": true,
+     "paths": {
+      "@ng-bootstrap/*": ["node_modules/@ng-bootstrap/*"]
+    },
+        "baseUrl": "./",
+
     "outDir": "./dist/out-tsc",
     "strict": true,
     "noImplicitOverride": true,

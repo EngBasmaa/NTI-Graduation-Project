@@ -30,12 +30,12 @@
               "zone.js"
             ],
             "tsConfig": "tsconfig.app.json",
-            "assets": [
-              {
-                "glob": "**/*",
-                "input": "public"
-              }
-            ],
+           
+               "assets": [
+                 "src/favicon.ico",
+                 "src/assets"
+               ]
+            ,
                "styles": [
               "src/styles.css",
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
@@ -91,7 +91,11 @@
           "options": {
             "polyfills": [
               "zone.js",
-              "zone.js/testing"
+              "hammerjs",
+              "local-forage",
+              "schemasync",
+              "rxjs-compat",
+              "angular-localize"
             ],
             "tsConfig": "tsconfig.spec.json",
             "assets": [

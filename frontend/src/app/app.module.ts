@@ -19,6 +19,10 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { NgxPaginationModule } from 'ngx-pagination';
+import { SpinnerComponent } from './shared/components/spinner/spinner.component';
+import { SelectComponent } from './shared/components/select/select.component';
+import { LazyLoadImageModule } from 'ng-lazyload-image';
 
 @NgModule({
   declarations: [
@@ -33,11 +37,12 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     ProductsDetailsComponent,
     DashboardComponent,
     LoginComponent,
-    RegisterComponent
+    RegisterComponent, SpinnerComponent, SelectComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule, FormsModule, RouterModule, ReactiveFormsModule, CommonModule, FontAwesomeModule
+    , NgxPaginationModule, LazyLoadImageModule
   ],
   providers: [],
   bootstrap: [AppComponent]

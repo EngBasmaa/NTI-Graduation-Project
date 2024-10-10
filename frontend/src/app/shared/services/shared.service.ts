@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class SharedService {
-  apiURL = 'https://fakestoreapi.com/products';
+  apiURL = 'https://fakestoreapi.com';
   constructor(private http: HttpClient) { }
 
 
