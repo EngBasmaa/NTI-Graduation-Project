@@ -4,11 +4,10 @@ const Article = require("../models/article");
 const multer = require("multer");
 const path = require("path");
 
-filename = "";
 // upload images:
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, "../imgs/")); // Ensure the "imgs" directory exists
+    cb(null, path.join(__dirname, "../uploads/")); // Ensure the "uploads" directory exists
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + "_" + file.originalname); // Create a unique filename using a timestamp
@@ -17,9 +16,25 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
+router.post("/upload", upload.single("image"), (req, res) => {
+  res.send("File uploaded successfully");
+});
 // ...........
+router.get("/getImage/:filename", (req, res) => {
+  const filename = req.params.filename;
+  const filepath = path.join(__dirname, "uploads", filename); // Adjust path as necessary
 
-router.post("/addArticle", upload.any("image"), (req, res) => {
+  console.log("Requested file path:", filepath); // Log the filepath for debugging
+
+  res.sendFile(filepath, err => {
+    if (err) {
+      console.error("Error sending file:", err);
+      res.status(404).send("File not found");
+    }
+  });
+});
+
+router.post("/create-article", upload.any("image"), (req, res) => {
   const article = new Article(req.body);
   let images;
   if (req.files && req.files.length > 0) {
@@ -39,16 +54,28 @@ router.post("/addArticle", upload.any("image"), (req, res) => {
     .catch(err => res.status(500).send(err));
 });
 
-router.get("/", (req, res) => {
+router.get("/all", (req, res) => {
   Article.find()
     .then(articles => res.status(200).send(articles))
     .catch(err => res.status(400).send(err));
 });
 
+// router.get("/getArticle/:id", (req, res) => {
+//   const id = req.params.id;
+//   Article.findById((_id = id))
+//     .then(article => res.status(200).send(article))
+//     .catch(err => res.status(400).send(err));
+// });
+
 router.get("/getArticle/:id", (req, res) => {
   const id = req.params.id;
-  Article.findById((_id = id))
-    .then(article => res.status(200).send(article))
+  Article.findById(id) // Use id directly
+    .then(article => {
+      if (!article) {
+        return res.status(404).send("Article not found");
+      }
+      res.status(200).send(article);
+    })
     .catch(err => res.status(400).send(err));
 });
 
@@ -66,7 +93,7 @@ router.get("/getAuthor/:id", async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/article/:id", async (req, res) => {
   try {
     const id = req.params.id;
     const article = await Article.findByIdAndDelete(id);
@@ -79,7 +106,7 @@ router.delete("/:id", async (req, res) => {
     res.status(400).send(err);
   }
 });
-router.put("/:id", upload.any("image"), async (req, res) => {
+router.put("/articles/:id", upload.any("image"), async (req, res) => {
   try {
     const id = req.params.id;
     const updatedData = req.body;

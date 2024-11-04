@@ -9,7 +9,6 @@ import { SidebarComponent } from './shared/components/sidebar/sidebar.component'
 import { HomeComponent } from './home/home.component';
 import { AboutComponent } from './about/about.component';
 import { ArticleDetailsComponent } from './article-details/article-details.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { CommonModule } from '@angular/common';
@@ -28,6 +27,7 @@ import { NotfoundComponent } from './notfound/notfound.component';
 import { ArticlesComponent } from './articles/articles.component';
 import { HttpClientModule } from '@angular/common/http';
 import { AuthModule } from '@ngx-auth/core';
+import { EditArticleComponent } from './edit-article/edit-article.component';
 
 @NgModule({
   declarations: [
@@ -38,9 +38,8 @@ import { AuthModule } from '@ngx-auth/core';
     HomeComponent,
     AboutComponent,
     ArticleDetailsComponent,
-    DashboardComponent,
     LoginComponent,
-    RegisterComponent, SpinnerComponent, SelectComponent, PrivacyComponent, AuthorComponent, CreateArticleComponent, NotfoundComponent, ArticlesComponent
+    RegisterComponent, SpinnerComponent, SelectComponent, PrivacyComponent, AuthorComponent, CreateArticleComponent, NotfoundComponent, ArticlesComponent, EditArticleComponent
   ],
   imports: [
     BrowserModule,

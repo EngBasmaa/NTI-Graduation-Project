@@ -53,7 +53,7 @@ export class RegisterComponent {
       this._auth.register(formData).subscribe(
         (response) => {
           // Handle successful response and navigate to login page
-          this.router.navigate(['/login']);
+          this.router.navigate(['/author/login']);
         },
         (error) => {
           // Handle error if registration fails

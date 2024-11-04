@@ -1,5 +1,5 @@
 .card {
-    width: 18rem
+    width: 30rem
 }
 
 h3 {
@@ -39,3 +39,12 @@ h3 {
     padding: 2px 1rem !important;
     border-radius: 1rem;
 }
+
+.card {
+    height: 22rem
+}
+
+/* img {
+    width: 4rem;
+    height: 4rem
+} */

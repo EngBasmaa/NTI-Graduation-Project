@@ -9,10 +9,10 @@
       </div>
     </div>
 
-    <div class="form-group d-flex mb-3">
+    <!-- <div class="form-group d-flex mb-3">
       <input type="text" class="form-control me-2" placeholder="tag" formControlName="tag">
-      <button type="button" class="btn" (click)="addTag()">Add</button>
-    </div>
+      <button type="button" class="btn" (click)="article.tags.push(tag);tag=''">Add</button>
+    </div> -->
 
     <div class="form-group mb-3">
       <input type="file" class="form-control" (change)="onFileChange($event)" [placeholder]="hasFocus ? 'Choose file...' : ''" [title]="hasFocus ? 'Select file to upload' : ''" (focus)="toggleFocus()" (blur)="toggleFocus()">

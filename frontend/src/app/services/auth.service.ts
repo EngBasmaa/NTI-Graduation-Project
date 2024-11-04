@@ -1,106 +1,132 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs'; // Ensure you import Observable
+import { Router } from '@angular/router';
+import { Observable, throwError, of } from 'rxjs';
+import { tap, catchError } from 'rxjs/operators';
+import { ImageService } from './image.service';
 
-
-interface AuthorData {
-  userId: string;
+export interface AuthorData {
+  id: string;
   email: string;
   name: string;
-}
-
-export interface AuthService {
-  isAuthenticated(): Promise<boolean>;
+  lastname: string;
+  about: string;
+  image?: string;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-
   private url = "http://localhost:5000/author/";
+  imageUrl?: string;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private router: Router, private imageService: ImageService) { }
 
-  // Register method for FormData (author with image)
-  register(formData: FormData) {
-    return this.http.post(this.url + 'register', formData);
+  fetchImage(filename: string): void {
+    this.imageService.getImage(filename).subscribe(
+      (response: Blob) => {
+        const objectURL = URL.createObjectURL(response);
+        this.imageUrl = objectURL;
+      },
+      error => this.handleError('Error fetching image', error)
+    );
   }
 
-  login(email: string, password: string) {
-    return this.http.post(this.url + 'login', { email, password }); // Update to your actual login endpoint
+  register(formData: FormData): Observable<any> {
+    return this.http.post(`${this.url}register`, formData);
   }
 
-  // login(email: string, password: string): Observable<{ mytoken: string }> { // Define return type
-  //   return this.http.post<{ mytoken: string }>(this.url + 'login', { email, password }); // Ensure correct typing
-  // }
-
-  // login(email: string, password: string) {
-  //   return this.http.post(this.url + 'login', { email, password }).subscribe((response: any) => {
-  //     localStorage.setItem('token', response.token); // Ensure you're storing the token correctly
-  //   });
-  // }
-
-  isLoggedIn() {
-    const token = localStorage.getItem('token');
-    return !!token;
-  }
-
-  //   getAuthorDataFromToken() {
-  //     const token = localStorage.getItem('token');
-  //     console.log("Retrieved token:", token); // Debug log
-  //     if (token) {
-  //       try {
-  //         const payload = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'); // Replace URL-safe characters
-  //         const data = JSON.parse(window.atob(payload));
-  //         return data;
-  //       } catch (error) {
-  //         console.error("Failed to decode token:", error);
-  //         return null;
+  // login(email: string, password: string): Observable<any> {
+  //   return this.http.post<{ token: string }>(`${this.url}login`, { email, password }).pipe(
+  //     tap(response => {
+  //       if (response?.token) {
+  //         localStorage.setItem('token', response.token);
+  //         console.log('Token stored:', response.token);
+  //       } else {
+  //         console.error('No token received in the response.');
   //       }
-  //     }
-  //     return null;
-  //   }
+  //     }),
+  //     catchError(error => this.handleError('Login failed', error))
+  //   );
+  // }
 
-  public getAuthorData(): AuthorData | null {
-    return this.getAuthorDataFromToken();
+  isLoggedIn(): boolean {
+    return !!localStorage.getItem('token');
   }
 
-  private getAuthorDataFromToken(): AuthorData | null {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      console.log('No token found in localStorage');
-      return null;
-    }
+  // getAuthorDataFromToken(token?: any): AuthorData | null {
+  //   token = localStorage.getItem('token');
+  //   if (!token) return null;
 
-    try {
-      const decodedToken = JSON.parse(atob(token));
+  //   const payload = token.split('.')[1];
+  //   if (!payload) return null;
 
-      if (
-        typeof decodedToken === 'object' &&
-        decodedToken !== null &&
-        'userId' in decodedToken &&
-        'email' in decodedToken &&
-        'name' in decodedToken
-      ) {
-        return {
-          userId: decodedToken.userId,
-          email: decodedToken.email,
-          name: decodedToken.name
-        };
-      } else {
-        console.warn('Decoded token does not match expected format');
-        return null;
-      }
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        console.error(`Failed to decode token: ${error.message}`);
-      } else {
-        console.error('An unknown error occurred while decoding the token');
-      }
-      console.log('Stored token:', token);
-      localStorage.removeItem('token');
-      return null;
-    }
+  //   const decodedPayload = JSON.parse(window.atob(payload));
+  //   return decodedPayload;
+  // }
+
+  getAuthorData(): Observable<AuthorData | null> {
+    const authorData = this.getAuthorDataFromToken();
+    return of(authorData);
+  }
+
+  // getById(id: string): Observable<AuthorData> {
+  //   return this.http.get<AuthorData>(this.url + id);
+  // }
+
+  getById(id: string): Observable<AuthorData> {
+    return this.http.get<AuthorData>(this.url + id);
+  }
+
+
+  getAllAuthors(): Observable<AuthorData[]> {
+    return this.http.get<AuthorData[]>(`${this.url}`);
+  }
+  // getById(id: string): Observable<any> {
+  //   return this.http.get<any>(`${this.url}/author/${id}`);
+  // }
+
+  // private handleError(message: string, error: any): Observable<never> {
+  //   console.error(`${message}:`, error);
+  //   return throwError(error);
+  // }
+
+
+  login(email: string, password: string): Observable<any> {
+    return this.http.post<{ token: string }>(`${this.url}login`, { email, password }).pipe(
+      tap(response => {
+        if (response?.token) {
+          localStorage.setItem('token', response.token);
+          console.log('Token stored:', response.token);
+        } else {
+          console.error('No token received in the response.');
+        }
+      }),
+      catchError(error => this.handleError('Login failed', error))
+    );
+  }
+
+  getAuthorDataFromToken(token?: any): AuthorData | null {
+    token = localStorage.getItem('token');
+    if (!token) return null;
+
+    const payload = token.split('.')[1];
+    if (!payload) return null;
+
+    const decodedPayload = JSON.parse(window.atob(payload));
+    return decodedPayload; // Ensure this contains an `id` field
+  }
+
+
+
+
+  private handleError(message: string, error: any): Observable<never> {
+    console.error(`${message}:`, error);
+    return throwError(error);
+  }
+
+  deleteArticle(articleId: string): Observable<any> {
+    return this.http.delete(`${this.url}article/${articleId}`);
   }
 }

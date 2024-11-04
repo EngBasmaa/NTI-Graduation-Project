@@ -3,16 +3,12 @@
 const mongoose = require("mongoose");
 
 const authorSchema = new mongoose.Schema({
-  name: String,
-  lastname: String,
-  description: String,
-  email: {
-    type: String,
-    unique: true
-  },
-  password: String,
-  about: String,
-  image: String
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  name: { type: String, required: true },
+  lastname: { type: String, required: true },
+  about: { type: String },
+  image: { type: String }
 });
 
 const Author = mongoose.models.Author || mongoose.model("Author", authorSchema);

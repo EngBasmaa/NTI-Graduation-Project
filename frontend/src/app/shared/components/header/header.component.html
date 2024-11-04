@@ -11,22 +11,28 @@
       <ul class="navbar-nav w-100 justify-content-end gap-5 me-5">
 
         <li class="nav-item">
-          <a class="nav-link" routerLink="/login" routerLinkActive="active">Login</a>
+          <a class="nav-link" routerLink="/author/login" routerLinkActive="active">Login</a>
         </li>
 
         <li class="nav-item">
           <a class="nav-link" routerLink="/register" routerLinkActive="active">Register</a>
         </li>
 
-        <li class="nav-item">
+        <!-- <li class="nav-item">
           <a class="nav-link" routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
-        </li>
+        </li> -->
 
         <!-- <li class="nav-item" *ngIf="isLoggedIn() && _auth.getAuthorDataFromToken()">
           <a class="nav-link" [routerLink]="['/author', _auth.getAuthorDataFromToken()?._id]" routerLinkActive="active">My Account</a>
         </li> -->
         <li class="nav-item" *ngIf="isLoggedIn()">
-          <a class="nav-link" [routerLink]="['/author', authorData?.userId]" routerLinkActive="active">My Account</a>
+          <a class="nav-link" [routerLink]="['/author', authorData?.id]" routerLinkActive="active">My Account</a>
+          <!-- <a class="nav-link" [routerLink]="['/author', authorData?.id]" routerLinkActive="active">My Account</a> -->
+          <!-- <a class="nav-link" [routerLink]="[authorData?.id]" routerLinkActive="active">My Account</a> -->
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/author/login" (click)="logout()" routerLinkActive="active">Log Out</a>
         </li>
 
       </ul>

@@ -35,11 +35,12 @@ span {
     justify-content: space-between;
 }
 
-.article-item .btn {
+.mybtn {
     background: var(--midlight);
     border: 1px solid var(--midlight);
     color: var(--green);
-    font-weight: 600
+    font-weight: 600;
+    width: 10rem !important
 }
 
 .see-more {

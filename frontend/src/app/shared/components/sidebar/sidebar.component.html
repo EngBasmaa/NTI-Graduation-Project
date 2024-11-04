@@ -6,12 +6,12 @@
     <a routerLink="/about" routerLinkActive="active" class="nav-link px-0"> About</a>
   </li>
   <li>
-    <a routerLink="/articles" routerLinkActive="active" class="nav-link px-0"> Articles</a>
+    <a routerLink='article/all' routerLinkActive="active" class="nav-link px-0"> Articles</a>
   </li>
   <li>
     <hr />
   </li>
-  <li>
+  <li *ngIf="isLoggedIn()">
     <a routerLink="/create-article" routerLinkActive="active" class="nav-link px-0"> Create Article</a>
   </li>
   <li>
